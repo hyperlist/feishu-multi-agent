@@ -1,0 +1,236 @@
+{
+  "_comment": "OpenClaw 飞书多 Agent 示例配置 — 替换所有 <YOUR_xxx> 和 ou_YOUR_xxx 占位符",
+
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "your-provider": {
+        "baseUrl": "https://your-api-endpoint/",
+        "apiKey": "<YOUR_API_KEY>",
+        "api": "anthropic-messages",
+        "models": [
+          {
+            "id": "your-model-id",
+            "name": "your-model-name",
+            "api": "anthropic-messages",
+            "reasoning": true,
+            "input": ["text", "image"],
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "your-provider/your-model-id",
+        "fallbacks": []
+      },
+      "models": {
+        "your-provider/your-model-id": {
+          "alias": "default"
+        }
+      },
+      "workspace": "/home/user/.openclaw/workspace",
+      "memorySearch": {
+        "enabled": true,
+        "provider": "local",
+        "query": {
+          "hybrid": {
+            "enabled": true,
+            "vectorWeight": 0.7,
+            "textWeight": 0.3
+          }
+        }
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "default": true,
+        "workspace": "/home/user/.openclaw/workspace",
+        "model": {
+          "primary": "your-provider/your-model-id",
+          "fallbacks": ["fallback-provider/fallback-model"]
+        },
+        "heartbeat": {
+          "every": "30m",
+          "target": "last"
+        }
+      },
+      {
+        "id": "coder",
+        "name": "Coder",
+        "workspace": "/home/user/.openclaw/workspace-coder",
+        "model": {
+          "primary": "your-provider/your-model-id",
+          "fallbacks": ["fallback-provider/fallback-model"]
+        },
+        "tools": {
+          "allow": [
+            "exec", "read", "write", "edit",
+            "message", "web_search", "web_fetch",
+            "session_status", "browser",
+            "feishu_doc", "feishu_perm",
+            "sessions_list", "sessions_history", "sessions_send"
+          ]
+        }
+      },
+      {
+        "id": "scout",
+        "name": "Scout",
+        "workspace": "/home/user/.openclaw/workspace-scout",
+        "model": {
+          "primary": "your-provider/your-model-id"
+        },
+        "tools": {
+          "allow": ["read", "message", "web_search", "web_fetch", "session_status"],
+          "deny": ["exec", "write", "edit", "browser", "gateway"]
+        }
+      },
+      {
+        "id": "assistant",
+        "name": "Assistant",
+        "workspace": "/home/user/.openclaw/workspace-assistant",
+        "model": {
+          "primary": "your-provider/your-model-id"
+        },
+        "heartbeat": {
+          "every": "60m",
+          "activeHours": { "start": "09:00", "end": "22:00" },
+          "target": "last"
+        },
+        "tools": {
+          "allow": [
+            "exec", "read", "write", "edit",
+            "message", "web_search", "web_fetch",
+            "session_status", "cron",
+            "feishu_doc", "feishu_perm",
+            "sessions_list", "sessions_history", "sessions_send"
+          ]
+        }
+      }
+    ]
+  },
+
+  "tools": {
+    "web": {
+      "search": {
+        "enabled": true,
+        "provider": "brave",
+        "apiKey": "<YOUR_BRAVE_API_KEY>"
+      }
+    },
+    "agentToAgent": {
+      "enabled": true
+    }
+  },
+
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default",
+        "peer": { "kind": "dm", "id": "ou_YOUR_OPEN_ID" }
+      }
+    },
+    {
+      "agentId": "coder",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default",
+        "peer": { "kind": "group", "id": "oc_CODER_CHAT_ID" }
+      }
+    },
+    {
+      "agentId": "scout",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default",
+        "peer": { "kind": "group", "id": "oc_SCOUT_CHAT_ID" }
+      }
+    },
+    {
+      "agentId": "assistant",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default",
+        "peer": { "kind": "group", "id": "oc_ASSISTANT_CHAT_ID" }
+      }
+    }
+  ],
+
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true
+  },
+
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "connectionMode": "websocket",
+      "dmPolicy": "allowlist",
+      "groupPolicy": "open",
+      "requireMention": false,
+      "groupAllowFrom": ["ou_YOUR_OPEN_ID"],
+      "groups": {
+        "oc_CODER_CHAT_ID": { "enabled": true, "requireMention": false },
+        "oc_SCOUT_CHAT_ID": { "enabled": true, "requireMention": false },
+        "oc_ASSISTANT_CHAT_ID": { "enabled": true, "requireMention": false, "groupAllowFrom": "*" }
+      },
+      "tools": {
+        "perm": true
+      },
+      "accounts": {
+        "default": {
+          "appId": "<YOUR_FEISHU_APP_ID>",
+          "appSecret": "<YOUR_FEISHU_APP_SECRET>",
+          "botName": "your-bot-name"
+        }
+      },
+      "allowFrom": ["ou_YOUR_OPEN_ID"],
+      "dm": {
+        "allowFrom": ["ou_YOUR_OPEN_ID"]
+      }
+    }
+  },
+
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "<YOUR_GATEWAY_TOKEN>"
+    }
+  },
+
+  "skills": {
+    "install": {
+      "nodeManager": "pnpm"
+    }
+  },
+
+  "plugins": {
+    "allow": ["feishu"],
+    "entries": {
+      "feishu": { "enabled": true }
+    }
+  }
+}
