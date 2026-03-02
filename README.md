@@ -28,10 +28,10 @@
 
 ## 实战经验总结
 
-### 创建新 Agent 的关键步骤（以 shuazi 为例）
+### 创建新 Agent 的关键步骤（以 controller-agent 为例）
 
 1. **收集信息**：用户 open_id、agent 名称、角色描述
-2. **运行创建脚本**：`python3 scripts/create_agent.py --agent-id shuazi --role "控制者"`
+2. **运行创建脚本**：`python3 scripts/create_agent.py --agent-id controller --role "控制者"`
 3. **处理飞书 API 限制**：
    - 用户不在应用可见范围（错误 232024）→ 让用户先给机器人发私信
    - 或手动在飞书开放平台后台添加用户

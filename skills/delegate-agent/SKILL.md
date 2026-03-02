@@ -42,7 +42,7 @@ sessions_list(limit=20)
 sessions_send(sessionKey=<key>, message=<brief>, timeoutSeconds=30)
 ```
 
-**关键：必须用 10 秒短超时。** 不管是否收到回复：
+**关键：必须用 30 秒短超时。** 不管是否收到回复：
 
 - ✅ **收到回复** → Agent 秒完成，记下结果
 - ⏳ **超时（status=timeout）** → **预期行为**，Agent 在后台工作
