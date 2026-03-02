@@ -4,14 +4,17 @@
 
 ---
 
-## 总流程（5 步）
+## 总流程（8 步）
 
 ```
 Step 1: 向用户收集信息（飞书凭证、想要的 Agent）
 Step 2: 引导用户申请飞书权限
 Step 3: 运行脚本创建子 Agent（workspace + 身份文件 + 飞书群 + 配置）
-Step 4: 重启 Gateway
-Step 5: 在每个群聊中发测试消息，确认 Agent 正常工作
+Step 4: 重启 Gateway 前的确认（关键安全步骤）
+Step 5: 重启 Gateway
+Step 6: 在每个群聊中发测试消息，确认 Agent 正常工作
+Step 7: 验证 Agent 功能
+Step 8: 更新系统文档（TOOLS.md、workspace 等）
 ```
 
 ---
@@ -221,7 +224,31 @@ with open('/path/to/.openclaw/openclaw.json', 'w') as f:
 
 ---
 
-## Step 4: 重启 Gateway
+## Step 4: 重启 Gateway 前的确认
+
+**重要**：在重启 Gateway 前必须与用户确认，因为重启会：
+
+1. **中断当前所有 Agent 会话**（正在执行的任务会被终止）
+2. **可能需要重新登录部分服务**（如浏览器会话）
+3. **影响正在进行的操作**（如文件读写、API 调用）
+
+**确认话术**：
+```
+配置已准备就绪，即将重启 Gateway 使新 Agent 生效。
+
+重启会：
+- 中断当前所有 Agent 会话
+- 新创建的 Agent 将立即可用
+- 需要几秒钟恢复连接
+
+确认现在重启吗？(y/n)
+```
+
+**用户同意后才执行重启**。
+
+---
+
+## Step 6: 重启 Gateway
 
 ```bash
 openclaw gateway restart
@@ -236,7 +263,7 @@ gateway(action="restart")
 
 ---
 
-## Step 5: 验证
+## Step 7: 验证
 
 在每个新创建的群聊中发送一条测试消息：
 
@@ -247,6 +274,35 @@ gateway(action="restart")
 验证项：
 - ✅ Agent 正常回复
 - ✅ 回复中的身份与 SOUL.md 一致
+
+## Step 8: 更新系统文档
+
+Agent 创建成功后，必须更新以下文档：
+
+### 1. main 的 TOOLS.md
+- **多 Agent 系统表格**：添加新 agent 的行
+- **权限矩阵**：添加新 agent 的权限列
+- **模型分配**：添加新 agent 的模型配置
+
+### 2. 新 agent 的 workspace 文档
+- **SOUL.md**：角色、工作目录、派发规则
+- **AGENTS.md**：子 agent 列表、派发方式  
+- **USER.md**：所属用户信息
+- **TOOLS.md**：项目路径、相关 agent 信息
+
+### 3. 分享必要技能
+```bash
+cp -r /path/to/workspace/skills/delegate-agent /path/to/workspace-<新agent>/skills/
+```
+
+### 4. Git 提交
+```bash
+cd /path/to/workspace
+git add TOOLS.md
+git commit -m "docs: 添加新agent 到多 Agent 系统"
+```
+
+**检查点**：所有文档同步，新 agent 能正常派发任务。
 - ✅ 使用正确的语言和风格
 
 如果 Agent 没有响应：

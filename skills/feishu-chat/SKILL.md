@@ -1,8 +1,6 @@
 ---
 name: feishu-chat
-description: |
-  飞书群聊管理：创建群、添加/移除成员、修改群信息。
-  需要 exec 权限执行 curl 命令。
+description: 飞书群聊管理：创建群、添加/移除成员、修改群信息。需要 exec 权限执行 curl 命令。
 ---
 
 # 飞书群聊管理

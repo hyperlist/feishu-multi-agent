@@ -77,6 +77,26 @@ curl -s "https://open.feishu.cn/open-apis/im/v1/chats/{chat_id}/members" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+## 常见错误
+
+### 错误 232024：用户不在应用可见范围
+
+```
+{"code":232024,"msg":"Users do not have the visibility of the app, or the operator does not have collaboration permissions with the target users."}
+```
+
+**原因**：用户没有授权应用查看其信息，或不在应用的可用成员列表里。
+
+**解决方案**（按推荐顺序）：
+1. **先让用户给机器人发私信** — 建立关系后自动授权
+2. **让管理员添加** — 如果是企业版，需要管理员在管理后台添加
+
+**注意**：只有企业版应用可以添加跨企业的用户；个人版应用只能添加同一企业的用户。
+
+### 错误 10014：app secret invalid
+
+凭证错误，检查 app_id 和 app_secret。
+
 ## 创建群后注册到 OpenClaw
 
 创建群聊后，需要在 `openclaw.json` 中注册：
