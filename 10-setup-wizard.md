@@ -43,7 +43,9 @@ python3 scripts/create_agent.py \
   --app-id "cli_xxx" --app-secret "xxx" --user-open-id "ou_xxx"
 ```
 
-自动完成：创建 workspace → 生成身份文件 → 飞书建群 → 更新配置 → 备份。
+自动完成：创建 workspace → 复制/生成身份文件 → 飞书建群 → 更新配置 → 备份。
+
+> 💡 有 `examples/` 模板的 preset（如 coder）会自动复制完整的 SOUL.md、AGENTS.md 等文件，开箱即用。
 
 ### 手动创建（备选）
 

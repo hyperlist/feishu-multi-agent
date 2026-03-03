@@ -31,6 +31,16 @@ openclaw gateway restart
 | USER.md | 用户偏好 | **必须填写** |
 | IDENTITY.md | 身份标识 | 可选修改 |
 
+## 内置 Skills
+
+| Skill | 触发 | 用途 |
+|-------|------|------|
+| **project-switcher** | `/repo` | 多项目管理，快速切换工作目录 |
+| **code-review** | `/review` | 代码审查（安全/质量/架构 checklist） |
+| **git-workflow** | `/git` | Git 分支/commit/PR 标准流程 |
+
+部署后编辑 `skills/project-switcher/config/projects.json` 注册你的项目。
+
 ## 权限配置
 
 ```json

@@ -26,6 +26,7 @@
   --model         模型 ID（默认用配置中的 defaults）
   --workspace-base  workspace 基础目录（默认 ~/.openclaw）
   --preset        预设角色（coder/trader/scout/tutor/butler/writer/analyst）
+                  有 examples/ 模板的 preset（如 coder）会优先复制完整模板文件
   --tools         逗号分隔的工具列表（覆盖 preset）
   --skip-chat     跳过创建飞书群聊
   --skip-config   跳过修改 openclaw.json（只创建 workspace）
@@ -34,6 +35,7 @@
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -41,10 +43,13 @@ from pathlib import Path
 # ============================================================
 # 预设角色配置
 # ============================================================
+# examples/ 目录中有完整模板的 preset，脚本会优先复制模板文件
+# 没有模板的 preset 使用下面的配置自动生成
 PRESETS = {
     "coder": {
         "tools": ["exec", "read", "write", "edit", "message",
                   "web_search", "web_fetch", "session_status", "browser"],
+        "template": "coder-agent",  # 指向 examples/coder-agent/
         "soul_core": "你是一位资深全栈工程师，精通多种编程语言和框架。你的职责是编写高质量代码、调试问题、重构架构。",
         "soul_principles": [
             "代码质量第一，不留技术债",
@@ -389,9 +394,29 @@ def main():
     ws = create_workspace(base_dir, args.agent_id)
 
     # Step 2: 创建身份文件
-    create_identity(ws, args.agent_id, agent_name, args.role, args.emoji, args.user_name)
-    create_soul(ws, args.agent_id, agent_name, args.role, args.user_name, preset)
-    create_agents_md(ws)
+    # 如果 preset 有 template，优先从 examples/ 复制完整模板
+    template_dir = None
+    if preset and preset.get("template"):
+        # 查找 examples/ 目录（相对于脚本位置）
+        script_dir = Path(__file__).resolve().parent
+        template_dir = script_dir.parent / "examples" / preset["template"]
+        if not template_dir.exists():
+            template_dir = None  # 找不到就 fallback 到自动生成
+
+    if template_dir:
+        # 复制模板文件（不覆盖已存在的文件）
+        copied = []
+        for src_file in template_dir.iterdir():
+            if src_file.is_file() and src_file.suffix == ".md":
+                dst_file = ws / src_file.name
+                if not dst_file.exists():
+                    shutil.copy2(src_file, dst_file)
+                    copied.append(src_file.name)
+        print(f"✅ 从模板 {preset['template']} 复制: {', '.join(copied) or '(已存在，跳过)'}")
+    else:
+        create_identity(ws, args.agent_id, agent_name, args.role, args.emoji, args.user_name)
+        create_soul(ws, args.agent_id, agent_name, args.role, args.user_name, preset)
+        create_agents_md(ws)
 
     # Step 3: 创建飞书群聊
     chat_id = None

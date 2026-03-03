@@ -1,0 +1,11 @@
+{
+  "projects": [
+    {
+      "name": "example-project",
+      "path": "/path/to/your/project",
+      "description": "示例项目，替换为实际路径",
+      "language": "Python",
+      "git": ""
+    }
+  ]
+}
