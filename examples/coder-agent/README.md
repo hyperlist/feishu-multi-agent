@@ -1,73 +1,65 @@
-# Coder Agent - 开发助手
+# Coder Agent - 开箱即用的开发助手
 
-飞书多 Agent 系统中的 **Coder** 角色模板。
+## 快速部署
 
-## 用途
+```bash
+# 1. 复制到 workspace
+cp -r examples/coder-agent ~/.openclaw/workspace-coder
 
-专门负责代码开发、代码审查、架构设计和技术方案支持的 Agent。
+# 2. 创建记忆目录
+mkdir -p ~/.openclaw/workspace-coder/memory
 
-## 核心能力
+# 3. 编辑 TOOLS.md — 填入实际的项目路径和环境信息
+# 4. 编辑 USER.md — 填入你的信息
 
-- **代码开发** — 接收需求后直接写代码交付
-- **代码审查** — Review 代码质量、找 bug、提改进建议
-- **架构设计** — 模块划分、接口设计、重构方案
-- **Bug 排查** — 读日志、复现问题、定位修复
-- **测试验证** — 写完跑测试，确保功能可用
+# 5. 在 openclaw.json 中添加 agent（或使用 create_agent.py）
+python3 scripts/create_agent.py \
+  --agent-id coder --agent-name "Coder" --preset coder \
+  --app-id "cli_xxx" --app-secret "xxx" --user-open-id "ou_xxx"
+
+# 6. 重启
+openclaw gateway restart
+```
 
 ## 文件说明
 
-| 文件 | 用途 |
-|------|------|
-| `SOUL.md` | Agent 的核心行为定义、开发规范、代码风格 |
-| `AGENTS.md` | 职责说明、工具权限、工作流程 |
-| `TOOLS.md` | 环境特有信息（路径、仓库、群聊等），需根据实际部署填写 |
+| 文件 | 用途 | 部署时修改 |
+|------|------|-----------|
+| SOUL.md | 行为定义、开发规范、代码风格 | 按需调整 |
+| AGENTS.md | 职责、工具权限、安全规范 | 按需调整 |
+| TOOLS.md | 环境信息（路径、仓库、Agent 列表） | **必须填写** |
+| USER.md | 用户偏好 | **必须填写** |
+| IDENTITY.md | 身份标识 | 可选修改 |
 
-## 部署步骤
-
-1. 复制本目录到目标 workspace：`cp -r examples/coder-agent /path/to/your/workspace-coder/`
-2. 编辑 `TOOLS.md`，填入实际的：
-   - 工作目录路径
-   - 代码仓库信息
-   - 飞书群聊 ID
-3. 在 `openclaw.json` 中添加 agent 配置（参考 `03-agent-binding.md`）
-4. 重启 Gateway：`openclaw gateway restart`
-
-## 使用示例
-
-用户在群聊中 @Coder：
-
-> @Coder 帮我写一个 Python 脚本，读取 CSV 文件并统计每列的空值数量
-
-Coder 会：
-1. 确认需求（如有不清楚的地方会提问）
-2. 在工作区创建脚本文件
-3. 运行测试验证
-4. 在群聊中回复结果
-
-## 权限建议
+## 权限配置
 
 ```json
 {
+  "id": "coder",
+  "name": "Coder",
+  "workspace": "~/.openclaw/workspace-coder",
   "tools": {
     "allow": [
-      "exec",
-      "read",
-      "write",
-      "edit",
-      "message",
-      "web_search",
-      "web_fetch",
-      "session_status",
-      "feishu_doc",
-      "feishu_perm"
+      "exec", "read", "write", "edit",
+      "message", "web_search", "web_fetch", "session_status",
+      "feishu_doc", "feishu_perm"
     ]
   }
 }
 ```
 
-## 与其他 Agent 协作
+## 核心能力
 
-- 接收 **Main** 指派的开发任务
-- 为 **Scout** 提供技术实现支持
-- 协助 **Trader** 开发量化策略
-- 为 **Tutor** 准备技术教程代码
+- **直接写文件** — 不给代码片段，直接在 workspace 创建/修改
+- **自动测试** — 写完跑 pytest 验证
+- **Git 规范** — 小步 commit，不擅自 push
+- **大文件安全** — >100 行用 edit 不用 write
+- **错误恢复** — 失败 2 次自动换方案
+
+## 使用示例
+
+在群聊中：
+
+> 帮我写一个 Python CLI，读取 CSV 统计每列空值数量，支持 --output json
+
+Coder 会自动：读需求 → 写代码 → 跑测试 → 回复结果

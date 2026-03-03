@@ -1,25 +1,35 @@
 # TOOLS.md - Coder Agent
 
-> 此文件记录环境特有信息，新部署时需根据实际情况填写
+> 部署后根据实际环境填写
+
+## 环境
+
+- **OS:** macOS / Linux
+- **Python:** 3.x
+- **Node:** vXX.x
+- **包管理:** pip / npm / brew
 
 ## 工作目录
 
-主工作区：`/path/to/your/workspace/`
+主工作区：`~/.openclaw/workspace-coder/`
 
 ## 代码仓库
 
-| 项目 | 路径 | Git Remote | 说明 |
-|------|------|------------|------|
-| project-a | `/path/to/project-a` | `git@github.com:yourname/project-a.git` | 示例项目 |
+| 项目 | 路径 | 说明 |
+|------|------|------|
+| my-project | `~/projects/my-project` | 示例，替换为实际项目 |
 
-- **默认工作目录:** project-a
-- **Git 规范:** commit 后不 push，除非明确要求
+## 多 Agent 协作
 
-## 多 Agent 系统
-
-| Agent | 群聊 ID | 用途 |
+| Agent | 群聊 ID | 关系 |
 |-------|---------|------|
-| coder | `oc_xxxxxxxxxxxxxxxx` | 开发助手 |
+| main | — | 任务派发者 |
+| coder | `oc_你的群聊ID` | 本 agent |
+
+## 注意事项
+
+- Git commit 后不 push，除非明确要求
+- 跨 workspace 访问需要在 SOUL.md 中明确授权
 
 ---
 
