@@ -73,6 +73,7 @@ git commit -m "feat: 自动生成的描述"
 ```bash
 git checkout -b feat/描述
 # ... 开发 ...
+git fetch origin main && git rebase origin/main   # push 前必须 rebase
 git push origin feat/描述
 gh pr create --title "feat: 描述" --body "..."
 # 等用户确认后 merge

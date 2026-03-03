@@ -54,7 +54,7 @@ Agent A (trader) ──sessions_send──► Agent B (coder)
 
 每个 Agent 可以配置独立的工具白名单/黑名单：
 
-- 主 Agent: 拥有所有权限（gateway、browser、cron...）
+- 协调者 Agent（如 MOMO）: 拥有所有权限（gateway、browser、cron...）
 - 只读 Agent（如 scout）: 仅 read、web_search、message
 - 编码 Agent（如 coder）: exec、read、write、edit
 - 跨 Agent 通信: sessions_list、sessions_history、sessions_send
@@ -92,7 +92,7 @@ Agent 处理（读 SOUL.md → 调用工具 → 生成回复）
 
 | Agent | 职责 | 模型建议 | 工具权限 |
 |-------|------|---------|---------|
-| main | 主控调度、系统管理 | 最强模型 | 全部 |
+| momo | 协调调度、系统管理 | 最强模型 | 全部 |
 | coder | 代码开发、调试 | 代码能力强的模型 | exec, read, write, edit |
 | trader | 交易分析、监控 | 通用模型 | exec, read, write, cron |
 | scout | 信息搜索、情报 | 通用模型 | read, web_search (只读) |

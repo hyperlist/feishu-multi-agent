@@ -182,7 +182,7 @@ curl -s -o /dev/null -w "%{http_code}" \
 cp ~/.openclaw/openclaw.json.bak ~/.openclaw/openclaw.json
 
 # 2. 或最小化配置启动（仅保留一个 Agent）
-# 手动编辑 openclaw.json，只保留 main agent + 一个 binding
+# 手动编辑 openclaw.json，只保留协调者 agent + 一个 binding
 
 # 3. 重启
 openclaw gateway restart

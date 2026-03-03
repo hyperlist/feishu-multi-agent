@@ -32,10 +32,10 @@ feishu-multi-agent/
 ├── 07-feishu-message-format.md   # 飞书消息格式规范
 ├── 08-skill-organization.md      # Skill 目录组织
 ├── 09-best-practices.md          # 最佳实践与踩坑记录
-├── 10-setup-wizard.md            # 配置引导（权限申请 + 自动创建子 Agent）
+├── 10-setup-wizard.md            # 配置引导（权限申请 + 自动创建功能 Agent）
 ├── 11-troubleshooting.md         # 故障排查指南
 ├── scripts/
-│   └── create_agent.py           # 一键创建子 Agent 脚本
+│   └── create_agent.py           # 一键创建功能 Agent 脚本
 ├── examples/
 │   ├── openclaw-config.json      # 示例配置（脱敏）
 │   ├── agent-soul-template.md    # Agent SOUL.md 模板

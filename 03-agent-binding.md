@@ -122,7 +122,7 @@ OpenClaw 通过 `bindings` 配置将飞书的群聊/私信路由到不同的 Age
 
 ```
 ~/.openclaw/
-├── workspace/          # main agent
+├── workspace-momo/     # 协调者 agent (MOMO)
 ├── workspace-coder/    # coder agent
 ├── workspace-trader/   # trader agent
 └── workspace-scout/    # scout agent

@@ -30,7 +30,7 @@ OpenClaw 按以下顺序扫描 Skill：
 │       └── scripts/
 │           └── run_test.sh
 │
-├── workspace/                       # main agent workspace
+├── workspace-momo/                  # 协调者 agent (MOMO) workspace
 │   └── skills/
 │       ├── agent-comm/              # 跨 Agent 通信（仅 main 和需要通信的 Agent）
 │       │   └── SKILL.md
@@ -68,7 +68,7 @@ OpenClaw 按以下顺序扫描 Skill：
 
 只有特定 Agent 需要的能力：
 
-- `delegate-coder` — 仅主 Agent 用（委派编码任务）
+- `delegate-coder` — 仅协调者用（委派编码任务）
 - `project-switcher` — 仅 coder 用（切换项目目录）
 - `apple-notes` / `apple-reminders` — 仅 butler 用（macOS 专属）
 - `agent-comm` — 仅需要跨 Agent 通信的 Agent
@@ -79,7 +79,7 @@ OpenClaw 按以下顺序扫描 Skill：
 
 - 如果任何 Agent 都可以用 → 全局
 - 如果只有特定 Agent 需要 → 放对应 workspace
-- 如果涉及安全/权限（如 gateway 操作）→ 放主 Agent workspace
+- 如果涉及安全/权限（如 gateway 操作）→ 放协调者 workspace
 
 ## 公共文件共享
 
