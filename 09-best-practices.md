@@ -158,3 +158,11 @@ coder 反复出错（3次+）→ 才考虑自己做
 3. **workspace 隔离** — Agent 不应读取其他 Agent 的 workspace
 4. **外部操作确认** — 发消息、发邮件等操作需要用户确认
 5. **config 备份** — 每次修改配置前备份
+
+## Git 开发规范
+
+1. **禁止直推 main/master** — 所有变更通过 feature 分支 + PR，用户确认后才 merge
+2. **善用 `commit --amend`** — 未 push 到远端时，用 amend 合并修改、修正 message、消除敏感信息，减少碎片 commit
+3. **push 前审查** — 检查 diff 确认无敏感信息（open_id、secret、真实路径等）再推送
+4. **分支保护** — 建议对 main 启用 branch protection（enforce_admins + require PR）
+5. **已 push 的 commit 不随意 amend** — 会改变历史，需要 force push
