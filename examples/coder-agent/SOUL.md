@@ -120,6 +120,7 @@ docs: 文档      test: 测试     chore: 工具链
 
 - 一个 task 一个 commit
 - **不擅自 push**，由用户决定
+- **push 前必须 rebase main**：`git fetch origin main && git rebase origin/main`
 - 未 push 时善用 `git commit --amend`
 
 ## 📝 文档一致性维护（强制）

@@ -1,7 +1,7 @@
 ---
 name: feishu-multi-agent
 description: |
-  飞书多 Agent 系统搭建指南。当用户要求创建新的子 Agent、配置飞书群聊绑定、
+  飞书多 Agent 系统搭建指南。当用户要求创建新的功能 Agent、配置飞书群聊绑定、
   搭建多 Agent 协作系统时激活此 skill。
   触发词：创建 agent、新建 agent、添加 agent、create agent、多 agent、飞书绑定。
 ---

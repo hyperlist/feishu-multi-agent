@@ -46,6 +46,20 @@ from pathlib import Path
 # examples/ 目录中有完整模板的 preset，脚本会优先复制模板文件
 # 没有模板的 preset 使用下面的配置自动生成
 PRESETS = {
+    "main": {
+        "tools": ["exec", "read", "write", "edit", "message",
+                  "web_search", "web_fetch", "session_status", "cron", "browser",
+                  "gateway", "sessions_list", "sessions_history", "sessions_send",
+                  "sessions_spawn", "feishu_doc", "feishu_perm", "tts"],
+        "template": "momo-agent",  # 指向 examples/momo-agent/
+        "soul_core": "你是多 Agent 系统的协调者。你的核心价值是决策和协调，不是执行。",
+        "soul_principles": [
+            "最大化委托，最小化亲力亲为",
+            "绝不代替子 Agent 执行任务",
+            "先动手再提问，用结果说话",
+            "三次失败就停，换方案或上报",
+        ],
+    },
     "coder": {
         "tools": ["exec", "read", "write", "edit", "message",
                   "web_search", "web_fetch", "session_status", "browser"],
