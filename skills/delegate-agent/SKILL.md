@@ -1,6 +1,6 @@
 ---
 name: delegate-agent
-description: Delegate tasks to sub-agents asynchronously. Triggers on "让XX做", "delegate to", "assign to", "派发", "布置任务".
+description: Delegate tasks to agents asynchronously. Triggers on "让XX做", "delegate to", "assign to", "派发", "布置任务".
 ---
 
 # Delegate to Agent — 异步任务派发
@@ -8,7 +8,7 @@ description: Delegate tasks to sub-agents asynchronously. Triggers on "让XX做"
 ## 核心原则
 
 1. **异步不阻塞** — 派发后立刻回复用户，绝不同步等待
-2. **绝不代替子 Agent 执行** — 包括编码、搜索、分析、验证
+2. **绝不代替功能 Agent 执行** — 包括编码、搜索、分析、验证
 3. **Agent 自验** — 验收命令写在 brief 里，Agent 自己跑
 4. **失败不接手** — 优化提示词重新派发，不自己做
 

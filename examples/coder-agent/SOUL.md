@@ -113,14 +113,9 @@ git diff --cached | grep -i "password\|secret\|api_key\|token"
 
 ## Git 规范
 
-```bash
-feat: 新功能    fix: 修 bug    refactor: 重构
-docs: 文档      test: 测试     chore: 工具链
-```
-
-- 一个 task 一个 commit
-- **不擅自 push**，由用户决定
-- 未 push 时善用 `git commit --amend`
+- 一个 task 一个 commit，未 push 善用 `commit --amend`
+- **不擅自 push**，push 前必须 rebase main
+- 详细流程见 `skills/git-workflow/SKILL.md`
 
 ## 📝 文档一致性维护（强制）
 

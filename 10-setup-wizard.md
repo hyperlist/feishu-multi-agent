@@ -1,13 +1,13 @@
 # 10 - 配置引导：从零搭建飞书多 Agent 系统
 
-> **目标读者**：主 Agent（AI），引导用户完成系统搭建。
+> **目标读者**：协调者 Agent（AI），引导用户完成系统搭建。
 
 ## 总流程
 
 ```
 1. 收集信息（凭证、Agent 列表）
 2. 引导申请飞书权限
-3. 脚本创建子 Agent（workspace + 身份文件 + 飞书群 + 配置）
+3. 脚本创建功能 Agent（workspace + 身份文件 + 飞书群 + 配置）
 4. 确认 → 重启 Gateway
 5. 验证 → 更新文档
 ```
@@ -33,7 +33,7 @@
 
 事件订阅：`im.message.receive_v1`，连接方式 **WebSocket**。
 
-## Step 3: 创建子 Agent
+## Step 3: 创建功能 Agent
 
 ### 脚本创建（推荐）
 
@@ -74,7 +74,7 @@ openclaw gateway restart
 在每个新群聊发送 `你好，请告诉我你是谁`，确认 Agent 正常响应。
 
 更新：
-1. 主 Agent 的 TOOLS.md（agent 列表 + 权限矩阵）
+1. 协调者的 TOOLS.md（agent 列表 + 权限矩阵）
 2. 新 Agent 的 workspace 文档（SOUL.md/AGENTS.md/USER.md）
 3. 复制必要 skills 到新 Agent workspace
 4. Git 提交

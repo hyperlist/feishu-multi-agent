@@ -8,6 +8,24 @@
 
 你可以直接将这个仓库喂给 OpenClaw（小龙虾 🦞），它会自动理解架构并帮你创建多 Agent 系统。人类不需要逐行阅读——让你的 AI 读。
 
+### 💬 试试对你的 AI 说
+
+```
+读一下 INDEX.md，了解这个项目的结构
+```
+
+```
+帮我部署一个 MOMO 协调者 Agent 和一个 Coder Agent
+```
+
+```
+按照 10-setup-wizard.md 引导我完成飞书多 Agent 系统搭建
+```
+
+```
+读一下 examples/coder-agent/，帮我创建一个开发助手
+```
+
 - **AI-first 文档**：结构化的提示词工程，而非给人看的散文
 - **模型一致性**：明确的代码和 checklist 代替模糊描述，减少不同模型的理解偏差
 - **自维护**：由 Agent 维护的项目，脚本化操作代替手动配置
@@ -111,20 +129,22 @@ python3 scripts/create_agent.py \
 
 ## 命名建议
 
-主控调度 Agent 推荐以 **MOMO** 命名（如 `momo`），子 Agent 按功能正常命名（`coder`、`trader`、`scout` 等）。
+协调者 Agent 推荐以 **MOMO** 命名（如 `momo`），功能 Agent 按职责正常命名（`coder`、`trader`、`scout` 等）。系统支持多个 MOMO 实例（peer 关系）。
 
 这不是强制要求，只是一个小小的偏好建议 🦞
 
 ## 预设角色
 
-| 角色 | 工具权限 | 适合场景 |
-|------|---------|---------|
-| **master** | 最高权限 | 调度子 Agent |
-| **coder** | 代码执行、文件读写 | 开发、调试 |
-| **trader** | 代码执行、定时任务 | 交易分析 |
-| **scout** | 只读、网页搜索 | 信息搜索 |
-| **tutor** | 只读、网页搜索 | 学习辅导 |
-| **butler** | 代码执行、定时任务、浏览器 | 日程、生活 |
+| 角色 | 模板 | 工具权限 | 适合场景 |
+|------|------|---------|---------|
+| **momo** | `momo-agent` | 协调权限（sessions_*, gateway） | 协调者（支持多实例 peer） |
+| **coder** | `coder-agent` | 代码执行、文件读写 | 开发、调试 |
+| **trader** | — | 代码执行、定时任务 | 交易分析 |
+| **scout** | — | 只读、网页搜索 | 信息搜索 |
+| **tutor** | — | 只读、网页搜索 | 学习辅导 |
+| **butler** | — | 代码执行、定时任务、浏览器 | 日程、生活 |
+
+> 有模板的 preset（main/coder）使用 `create_agent.py --preset` 时会自动复制 `examples/` 中的完整配置文件。
 
 ## 飞书权限清单
 
@@ -149,7 +169,7 @@ feishu-multi-agent/
 ├── README.md                  本文件
 ├── INDEX.md                   AI 文档索引
 ├── 01~11 *.md                 详细设计文档
-├── scripts/create_agent.py    一键创建子 Agent
+├── scripts/create_agent.py    一键创建功能 Agent
 ├── examples/                  配置模板、Agent 模板
 └── skills/                    可复用 Agent Skills
     ├── agent-comm/            跨 Agent 通信
