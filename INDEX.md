@@ -20,7 +20,7 @@
 
 ## ⚠️ 项目维护（重要）
 
-**如果你要修改这个项目本身（如添加新 Agent、修改配置格式、更新文档），必须先阅读：**
+**如果你要修改这个项目本身（如修改配置格式、更新文档），必须先阅读：**
 
 - `skills/maintenance/SKILL.md` — 维护指南入口
 - `skills/maintenance/references/project-maintenance.md` — 详细开发原则
