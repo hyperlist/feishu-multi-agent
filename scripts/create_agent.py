@@ -317,10 +317,32 @@ def create_feishu_chat(app_id: str, app_secret: str,
 
 def update_openclaw_config(config_path: Path, agent_id: str, agent_name: str,
                             workspace: Path, chat_id: str | None,
-                            tools: list[str], model: str | None):
-    """更新 openclaw.json，添加新 Agent 和 Binding"""
+                            tools: list[str], model: str | None,
+                            account_id: str = "default"):
+    """更新 openclaw.json，添加新 Agent 和 Binding
+    
+    Args:
+        config_path: 配置文件路径
+        agent_id: Agent ID
+        agent_name: Agent 显示名称
+        workspace: Workspace 路径
+        chat_id: 飞书群聊 ID（可选）
+        tools: 工具权限列表
+        model: 模型 ID（可选）
+        account_id: 飞书账号 ID（默认 "default"）
+    """
     with open(config_path, "r", encoding="utf-8") as f:
         config = json.load(f)
+
+    # 初始化必要字段
+    if "agents" not in config:
+        config["agents"] = {"list": []}
+    if "bindings" not in config:
+        config["bindings"] = []
+    if "channels" not in config:
+        config["channels"] = {}
+    if "feishu" not in config["channels"]:
+        config["channels"]["feishu"] = {}
 
     # 检查是否已存在
     existing_ids = [a["id"] for a in config["agents"]["list"]]
@@ -344,29 +366,47 @@ def update_openclaw_config(config_path: Path, agent_id: str, agent_name: str,
 
     # 添加 Binding
     if chat_id:
-        binding = {
-            "agentId": agent_id,
-            "match": {
-                "channel": "feishu",
-                "accountId": "default",
-                "peer": {"kind": "group", "id": chat_id}
+        # 检查是否已存在相同 binding
+        existing_binding = False
+        for binding in config["bindings"]:
+            match = binding.get("match", {})
+            if match.get("peer", {}).get("id") == chat_id:
+                existing_binding = True
+                print(f"⚠️ Binding 已存在: {binding.get('agentId')} → group:{chat_id}")
+                break
+        
+        if not existing_binding:
+            binding = {
+                "agentId": agent_id,
+                "match": {
+                    "channel": "feishu",
+                    "accountId": account_id,
+                    "peer": {"kind": "group", "id": chat_id}
+                }
             }
-        }
-        config["bindings"].append(binding)
-        print(f"✅ Binding 已添加: {agent_id} → {chat_id}")
+            config["bindings"].append(binding)
+            print(f"✅ Binding 已添加: {agent_id} → group:{chat_id}")
 
         # 添加 groups 配置
         if "groups" not in config["channels"]["feishu"]:
             config["channels"]["feishu"]["groups"] = {}
-        config["channels"]["feishu"]["groups"][chat_id] = {
-            "enabled": True,
-            "requireMention": False
-        }
-        print(f"✅ 群聊配置已添加")
+        
+        if chat_id not in config["channels"]["feishu"]["groups"]:
+            config["channels"]["feishu"]["groups"][chat_id] = {
+                "enabled": True,
+                "requireMention": False
+            }
+            print(f"✅ 群聊配置已添加: {chat_id}")
+        else:
+            print(f"⚠️ 群聊配置已存在: {chat_id}")
 
     # 验证
-    assert len(config["agents"]["list"]) >= 1, "agents.list 为空！"
-    assert "bindings" in config, "bindings 缺失！"
+    if len(config["agents"]["list"]) < 1:
+        print("❌ agents.list 为空！")
+        return
+    if "bindings" not in config:
+        print("❌ bindings 缺失！")
+        return
 
     # 备份并写入
     backup_path = config_path.with_suffix(".json.bak")
@@ -393,6 +433,7 @@ def main():
     parser.add_argument("--app-id", help="飞书 App ID")
     parser.add_argument("--app-secret", help="飞书 App Secret")
     parser.add_argument("--user-open-id", help="用户飞书 open_id")
+    parser.add_argument("--account-id", default="default", help="飞书账号 ID（多账号场景使用）")
     parser.add_argument("--workspace-base", default=os.path.expanduser("~/.openclaw"),
                         help="workspace 基础目录")
     parser.add_argument("--skip-chat", action="store_true", help="跳过创建飞书群聊")
@@ -459,7 +500,7 @@ def main():
         config_path = base_dir / "openclaw.json"
         if config_path.exists():
             update_openclaw_config(config_path, args.agent_id, agent_name,
-                                    ws, chat_id, tools, args.model)
+                                    ws, chat_id, tools, args.model, args.account_id)
         else:
             print(f"⚠️ 配置文件不存在: {config_path}")
             print("   请先安装并初始化 OpenClaw")
