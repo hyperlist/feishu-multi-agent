@@ -6,6 +6,8 @@ OpenClaw 通过 `bindings` 配置将飞书的群聊/私信路由到不同的 Age
 
 **一条 binding = 一条路由规则：** "来自这个群聊的消息 → 发给这个 Agent 处理"
 
+> ⚠️ **这是最常出错的配置点**。很多场景下的配置问题都源于对 binding 结构的理解不完整。
+
 ## 配置结构
 
 ### Agent 定义
@@ -113,6 +115,128 @@ OpenClaw 通过 `bindings` 配置将飞书的群聊/私信路由到不同的 Age
 ```
 
 不同用户的私信可以路由到不同 Agent。
+
+## Binding 字段详解
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `agentId` | ✅ | 要绑定的 Agent ID（在 agents.list 中定义） |
+| `match.channel` | ✅ | 固定值 `"feishu"` |
+| `match.accountId` | ✅ | 飞书账号标识，单账号填 `"default"`，多账号时用账号 key |
+| `match.peer.kind` | ✅ | `"group"`（群聊）或 `"dm"`（私信） |
+| `match.peer.id` | ✅ | 群聊 ID（`oc_xxx`）或用户 open_id（`ou_xxx`） |
+
+### accountId 字段说明
+
+- **单账号场景**：`"accountId": "default"`
+- **多账号场景**（如同时连接多个飞书应用）：
+  ```json
+  {
+    "match": {
+      "channel": "feishu",
+      "accountId": "work",  // 对应 channels.feishu.accounts.work
+      "peer": { "kind": "group", "id": "oc_xxx" }
+    }
+  }
+  ```
+
+## ⚠️ 常见 Binding 配置问题
+
+### 问题 1：缺少 accountId
+
+```json
+// ❌ 错误：缺少 accountId
+{
+  "agentId": "coder",
+  "match": {
+    "channel": "feishu",
+    "peer": { "kind": "group", "id": "oc_xxx" }
+  }
+}
+
+// ✅ 正确：添加 accountId
+{
+  "agentId": "coder",
+  "match": {
+    "channel": "feishu",
+    "accountId": "default",
+    "peer": { "kind": "group", "id": "oc_xxx" }
+  }
+}
+```
+
+### 问题 2：binding 引用不存在的 Agent
+
+```json
+// ❌ 错误：agentId 不在 agents.list 中
+{ "agentId": "nonExistent", "match": { "channel": "feishu", "accountId": "default", "peer": { "kind": "group", "id": "oc_xxx" } } }
+
+// ✅ 正确：先在 agents.list 中定义，再在 binding 中引用
+```
+
+### 问题 3：同一群聊绑定多个 Agent
+
+```json
+// ❌ 错误：同一群聊只能绑定一个 Agent，后者会覆盖前者
+{ "agentId": "coder", "match": { "channel": "feishu", "accountId": "default", "peer": { "kind": "group", "id": "oc_xxx" } } }
+{ "agentId": "scout", "match": { "channel": "feishu", "accountId": "default", "peer": { "kind": "group", "id": "oc_xxx" } } }
+
+// ✅ 正确：一个群聊绑定一个 Agent，需要多角色请在 Agent 内部处理
+```
+
+### 问题 4：多账号场景 binding 未指定 accountId
+
+```json
+// 假设配置了多个飞书账号
+"accounts": {
+  "default": { "appId": "...", "appSecret": "..." },
+  "work": { "appId": "...", "appSecret": "..." }
+}
+
+// ❌ 错误：未指定 accountId，默认只会匹配 default
+{ "agentId": "coder", "match": { "channel": "feishu", "peer": { "kind": "group", "id": "oc_xxx" } } }
+
+// ✅ 正确：明确指定 accountId
+{ "agentId": "coder", "match": { "channel": "feishu", "accountId": "work", "peer": { "kind": "group", "id": "oc_xxx" } } }
+```
+
+### 问题 5：open_id 跨租户不通用
+
+```json
+// ❌ 错误：不同租户的 open_id 不同
+{ "agentId": "main", "match": { "channel": "feishu", "accountId": "default", "peer": { "kind": "dm", "id": "ou_在A租户的open_id" } } }
+// 但这个 binding 可能在 B 租户不生效
+
+// ✅ 正确：确保 binding 中的 open_id 与实际飞书账号匹配
+```
+
+## Binding 与 Groups 配置
+
+binding 负责路由，groups 负责群聊行为控制。两者配合使用：
+
+```json
+{
+  "bindings": [
+    { "agentId": "coder", "match": { "channel": "feishu", "accountId": "default", "peer": { "kind": "group", "id": "oc_xxx" } } }
+  ],
+  "channels": {
+    "feishu": {
+      "groups": {
+        "oc_xxx": {
+          "enabled": true,
+          "requireMention": false
+        }
+      }
+    }
+  }
+}
+```
+
+| groups 配置项 | 说明 |
+|---------------|------|
+| `enabled` | 是否启用该群聊的消息处理 |
+| `requireMention` | 是否需要 @Bot 才能响应 |
+| `groupAllowFrom` | 允许发送消息的用户白名单 |
 
 ## Agent 配置详解
 
